@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<ui:composition template="/WEB-INF/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets">
+
+  <ui:param name="seccion" value="productos"/>
+
+  <f:metadata>
+    <f:viewParam name="productoId" value="#{resenaBean.productoId}"/>
+    <f:viewAction action="#{resenaBean.cargarProducto}"/>
+  </f:metadata>
+
+  <ui:define name="titulo">Escribir rese&#241;a</ui:define>
+
+  <ui:define name="contenido">
+
+    <ui:fragment rendered="#{empty resenaBean.producto}">
+      <div class="vacio">
+        <strong>No encontramos ese repuesto</strong>
+        <h:link outcome="productos" value="Volver al cat&#225;logo"/>
+      </div>
+    </ui:fragment>
+
+    <ui:fragment rendered="#{not empty resenaBean.producto}">
+
+      <div class="pagina-encabezado">
+        <span class="eyebrow">#{resenaBean.producto.codigo}</span>
+        <h2>Escribir rese&#241;a</h2>
+        <p>Cont&#225; c&#243;mo te fue con #{resenaBean.producto.nombre}.</p>
+      </div>
+
+      <div class="card">
+        <h:form>
+
+          <div class="campo">
+            <h:outputLabel for="punt" value="Puntaje"/>
+            <h:selectOneMenu id="punt" value="#{resenaBean.puntaje}">
+              <f:selectItem itemLabel="&#9733;&#9733;&#9733;&#9733;&#9733; - Excelente" itemValue="5"/>
+              <f:selectItem itemLabel="&#9733;&#9733;&#9733;&#9733;&#9734; - Muy bueno" itemValue="4"/>
+              <f:selectItem itemLabel="&#9733;&#9733;&#9733;&#9734;&#9734; - Aceptable" itemValue="3"/>
+              <f:selectItem itemLabel="&#9733;&#9733;&#9734;&#9734;&#9734; - Flojo" itemValue="2"/>
+              <f:selectItem itemLabel="&#9733;&#9734;&#9734;&#9734;&#9734; - Malo" itemValue="1"/>
+            </h:selectOneMenu>
+          </div>
+
+          <div class="campo">
+            <h:outputLabel for="tit" value="T&#237;tulo"/>
+            <h:inputText id="tit" value="#{resenaBean.titulo}"/>
+          </div>
+
+          <div class="campo">
+            <h:outputLabel for="txt" value="Tu experiencia"/>
+            <h:inputTextarea id="txt" value="#{resenaBean.texto}" rows="5"/>
+            <span class="campo-ayuda">
+              Cont&#225; para qu&#233; bicicleta lo usaste y c&#243;mo respondi&#243;.
+            </span>
+          </div>
+
+          <div class="campo-ayuda" style="background:var(--accent-soft);padding:11px 13px;border-radius:7px">
+            Tu rese&#241;a pasa por moderaci&#243;n antes de publicarse.
+            Solo pod&#233;s rese&#241;ar repuestos que compraste.
+          </div>
+
+          <div class="form-acciones">
+            <h:commandButton value="Enviar rese&#241;a"
+                             action="#{resenaBean.publicar}"
+                             styleClass="btn btn-primario"/>
+            <h:link outcome="producto" value="Cancelar"
+                    styleClass="btn btn-secundario">
+              <f:param name="productoId" value="#{resenaBean.productoId}"/>
+            </h:link>
+          </div>
+
+        </h:form>
+      </div>
+
+    </ui:fragment>
+
+  </ui:define>
+</ui:composition>

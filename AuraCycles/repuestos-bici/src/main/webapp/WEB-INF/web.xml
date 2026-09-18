@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+  <display-name>Resenas y Devoluciones - Repuestos de Bicicleta</display-name>
+
+  <context-param>
+    <param-name>jakarta.faces.PROJECT_STAGE</param-name>
+    <param-value>Development</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>jakarta.faces.FACELETS_SKIP_COMMENTS</param-name>
+    <param-value>true</param-value>
+  </context-param>
+
+  <servlet>
+    <servlet-name>Faces Servlet</servlet-name>
+    <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Faces Servlet</servlet-name>
+    <url-pattern>*.xhtml</url-pattern>
+  </servlet-mapping>
+
+  <welcome-file-list>
+    <welcome-file>login.xhtml</welcome-file>
+  </welcome-file-list>
+
+  <session-config>
+    <session-timeout>30</session-timeout>
+  </session-config>
+
+  <!-- Autorizacion por rol aplicada por el contenedor, antes de ejecutar la pagina. -->
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Panel de moderacion</web-resource-name>
+      <url-pattern>/moderacion.xhtml</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>MODERADOR</role-name>
+    </auth-constraint>
+  </security-constraint>
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Pantallas de la tienda</web-resource-name>
+      <url-pattern>/productos.xhtml</url-pattern>
+      <url-pattern>/producto.xhtml</url-pattern>
+      <url-pattern>/compras.xhtml</url-pattern>
+      <url-pattern>/devolucion.xhtml</url-pattern>
+      <url-pattern>/devolucion-ok.xhtml</url-pattern>
+      <url-pattern>/resena.xhtml</url-pattern>
+      <url-pattern>/perfil.xhtml</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>CLIENTE</role-name>
+      <role-name>MODERADOR</role-name>
+    </auth-constraint>
+  </security-constraint>
+
+  <login-config>
+    <auth-method>FORM</auth-method>
+    <form-login-config>
+      <form-login-page>/login.xhtml</form-login-page>
+      <form-error-page>/login.xhtml</form-error-page>
+    </form-login-config>
+  </login-config>
+
+  <security-role>
+    <role-name>CLIENTE</role-name>
+  </security-role>
+  <security-role>
+    <role-name>MODERADOR</role-name>
+  </security-role>
+
+</web-app>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<ui:composition template="/WEB-INF/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets">
+
+  <ui:param name="seccion" value="compras"/>
+
+  <ui:define name="titulo">Mis compras</ui:define>
+
+  <ui:define name="contenido">
+
+    <div class="pagina-encabezado">
+      <span class="eyebrow">Historial</span>
+      <h2>Mis compras</h2>
+      <p>Ten&#233;s 30 d&#237;as desde la compra para pedir una devoluci&#243;n.</p>
+    </div>
+
+    <ui:fragment rendered="#{empty comprasBean.compras}">
+      <div class="vacio">
+        <strong>Todav&#237;a no compraste nada</strong>
+        <h:link outcome="productos" value="Ver el cat&#225;logo de repuestos"/>
+      </div>
+    </ui:fragment>
+
+    <ui:fragment rendered="#{not empty comprasBean.compras}">
+      <div class="tabla-wrap">
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>Orden</th>
+              <th>Fecha</th>
+              <th>Repuesto</th>
+              <th>Cant.</th>
+              <th>Importe</th>
+              <th>Acci&#243;n</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ui:repeat value="#{comprasBean.compras}" var="v">
+              <tr>
+                <td data-etiqueta="Orden">
+                  <span class="codigo">#{v.numeroOrden}</span>
+                </td>
+                <td data-etiqueta="Fecha" class="celda-tenue">
+                  <h:outputText value="#{v.fecha}">
+                    <f:convertDateTime type="localDate" pattern="dd/MM/yyyy"/>
+                  </h:outputText>
+                </td>
+                <td data-etiqueta="Repuesto" class="celda-titulo">#{v.producto.nombre}</td>
+                <td data-etiqueta="Cant.">#{v.cantidad}</td>
+                <td data-etiqueta="Importe">
+                  <h:outputText value="#{v.importe}">
+                    <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="0"/>
+                  </h:outputText>
+                </td>
+                <td data-etiqueta="Acci&#243;n">
+                  <ui:fragment rendered="#{comprasBean.sePuedeDevolver(v)}">
+                    <h:link outcome="devolucion" value="Solicitar devoluci&#243;n"
+                            styleClass="btn btn-secundario btn-chico">
+                      <f:param name="ventaId" value="#{v.id}"/>
+                    </h:link>
+                  </ui:fragment>
+                  <ui:fragment rendered="#{not comprasBean.sePuedeDevolver(v)}">
+                    <span class="badge badge-neutro">No disponible</span>
+                  </ui:fragment>
+                </td>
+              </tr>
+            </ui:repeat>
+          </tbody>
+        </table>
+      </div>
+    </ui:fragment>
+
+  </ui:define>
+</ui:composition>

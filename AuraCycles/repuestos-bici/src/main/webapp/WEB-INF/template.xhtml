@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+
+<h:head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>#{empty titulo ? 'Resenas y Devoluciones' : titulo} &#183; Repuestos de Bicicleta</title>
+  <h:outputStylesheet library="css" name="app.css"/>
+</h:head>
+
+<h:body styleClass="#{sesion.claseTema}">
+
+  <input type="checkbox" id="menu" style="display:none"/>
+
+  <div class="layout">
+
+    <label for="menu" class="backdrop"><h:outputText value=""/></label>
+
+    <aside class="sidebar">
+
+      <div class="sidebar-marca">
+        <div class="sidebar-logo">RB</div>
+        <div>
+          <div class="sidebar-nombre">Repuestos</div>
+          <div class="sidebar-sub">de bicicleta</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <span class="nav-titulo">Tienda</span>
+
+        <h:link outcome="productos"
+                styleClass="#{seccion eq 'productos' ? 'activo' : ''}">
+          <span class="nav-dot"></span>
+          <span class="etiqueta">Productos</span>
+        </h:link>
+
+        <h:link outcome="compras"
+                styleClass="#{seccion eq 'compras' ? 'activo' : ''}">
+          <span class="nav-dot"></span>
+          <span class="etiqueta">Mis compras</span>
+        </h:link>
+
+        <h:link outcome="perfil"
+                styleClass="#{seccion eq 'perfil' ? 'activo' : ''}">
+          <span class="nav-dot"></span>
+          <span class="etiqueta">Perfil</span>
+        </h:link>
+
+        <ui:fragment rendered="#{sesion.moderador}">
+          <span class="nav-titulo">Moderaci&#243;n</span>
+          <h:link outcome="moderacion"
+                  styleClass="#{seccion eq 'moderacion' ? 'activo' : ''}">
+            <span class="nav-dot"></span>
+            <span class="etiqueta">Panel</span>
+          </h:link>
+        </ui:fragment>
+      </nav>
+
+    </aside>
+
+    <div>
+
+      <header class="topbar">
+        <label for="menu" class="hamburguesa">&#9776;</label>
+
+        <h1 class="topbar-titulo">
+          <ui:insert name="titulo">Panel</ui:insert>
+        </h1>
+
+        <div class="topbar-derecha">
+          <h:form>
+            <h:commandButton value="#{sesion.temaOscuro ? 'Tema claro' : 'Tema oscuro'}"
+                             action="#{sesion.alternarTema}"
+                             styleClass="btn-tema"/>
+          </h:form>
+
+          <div class="usuario-chip">
+            <div class="avatar">#{sesion.nombre.substring(0,1)}</div>
+            <span class="nombre">#{sesion.nombre}</span>
+          </div>
+
+          <h:form>
+            <h:commandLink value="Cerrar sesi&#243;n"
+                           action="#{loginBean.salir}"
+                           styleClass="btn btn-secundario btn-chico"/>
+          </h:form>
+        </div>
+      </header>
+
+      <main class="contenido">
+
+        <div class="mensajes">
+          <h:messages infoClass="info" errorClass="error" layout="list"
+                      showDetail="false" showSummary="true"/>
+        </div>
+
+        <ui:insert name="contenido"/>
+
+      </main>
+
+    </div>
+  </div>
+
+</h:body>
+</html>

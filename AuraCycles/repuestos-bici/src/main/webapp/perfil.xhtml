@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<ui:composition template="/WEB-INF/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets">
+
+  <ui:param name="seccion" value="perfil"/>
+
+  <ui:define name="titulo">Perfil de usuario</ui:define>
+
+  <ui:define name="contenido">
+
+    <div class="pagina-encabezado">
+      <span class="eyebrow">Tu cuenta</span>
+      <h2>Perfil de usuario</h2>
+      <p>Actualiz&#225; tus datos o cambi&#225; la contrase&#241;a.</p>
+    </div>
+
+    <div class="card">
+      <h3 class="card-titulo">Datos personales</h3>
+
+      <h:form>
+        <div class="campo">
+          <h:outputLabel for="nom" value="Nombre y apellido"/>
+          <h:inputText id="nom" value="#{perfilBean.nombre}"/>
+        </div>
+
+        <div class="campo">
+          <h:outputLabel for="mail" value="Email"/>
+          <h:inputText id="mail" value="#{perfilBean.email}"/>
+        </div>
+
+        <div class="campo">
+          <h:outputLabel value="Rol"/>
+          <div>
+            <span class="badge badge-neutro">#{sesion.usuario.rol}</span>
+            <span class="campo-ayuda" style="margin-left:8px">
+              El rol lo asigna la administraci&#243;n, no se edita desde ac&#225;.
+            </span>
+          </div>
+        </div>
+
+        <div class="form-acciones">
+          <h:commandButton value="Guardar cambios"
+                           action="#{perfilBean.guardarDatos}"
+                           styleClass="btn btn-primario"/>
+        </div>
+      </h:form>
+    </div>
+
+    <div class="card">
+      <h3 class="card-titulo">Cambiar contrase&#241;a</h3>
+
+      <h:form>
+        <div class="campo">
+          <h:outputLabel for="actual" value="Contrase&#241;a actual"/>
+          <h:inputSecret id="actual" value="#{perfilBean.passwordActual}"
+                         autocomplete="current-password"/>
+        </div>
+
+        <div class="campo">
+          <h:outputLabel for="nueva" value="Contrase&#241;a nueva"/>
+          <h:inputSecret id="nueva" value="#{perfilBean.passwordNueva}"
+                         autocomplete="new-password"/>
+          <span class="campo-ayuda">Al menos 8 caracteres.</span>
+        </div>
+
+        <div class="campo">
+          <h:outputLabel for="rep" value="Repetir contrase&#241;a nueva"/>
+          <h:inputSecret id="rep" value="#{perfilBean.passwordRepetida}"
+                         autocomplete="new-password"/>
+        </div>
+
+        <div class="form-acciones">
+          <h:commandButton value="Cambiar contrase&#241;a"
+                           action="#{perfilBean.guardarPassword}"
+                           styleClass="btn btn-primario"/>
+        </div>
+      </h:form>
+    </div>
+
+  </ui:define>
+</ui:composition>

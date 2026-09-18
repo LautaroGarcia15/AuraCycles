@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<ui:composition template="/WEB-INF/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets">
+
+  <ui:param name="seccion" value="compras"/>
+
+  <f:metadata>
+    <f:viewParam name="ventaId" value="#{devolucionBean.ventaId}"/>
+    <f:viewAction action="#{devolucionBean.iniciarFlujo}"/>
+  </f:metadata>
+
+  <ui:define name="titulo">Solicitar devoluci&#243;n</ui:define>
+
+  <ui:define name="contenido">
+
+    <ui:fragment rendered="#{not devolucionBean.hayBorrador}">
+      <div class="vacio">
+        <strong>No pudimos abrir la solicitud</strong>
+        Puede que el plazo haya vencido o que ya exista una devoluci&#243;n para esa compra.
+        <div style="margin-top:14px">
+          <h:link outcome="compras" value="Volver a mis compras"
+                  styleClass="btn btn-secundario btn-chico"/>
+        </div>
+      </div>
+    </ui:fragment>
+
+    <ui:fragment rendered="#{devolucionBean.hayBorrador}">
+
+      <div class="pagina-encabezado">
+        <span class="eyebrow">Paso 2 de 3</span>
+        <h2>Solicitar devoluci&#243;n</h2>
+        <p>Revis&#225; la compra, cont&#225; qu&#233; pas&#243; y confirm&#225;. Un moderador la resuelve despu&#233;s.</p>
+      </div>
+
+      <dl class="resumen">
+        <div class="resumen-fila">
+          <dt>Orden</dt>
+          <dd class="codigo">#{devolucionBean.venta.numeroOrden}</dd>
+        </div>
+        <div class="resumen-fila">
+          <dt>Repuesto</dt>
+          <dd>#{devolucionBean.venta.producto.nombre}</dd>
+        </div>
+        <div class="resumen-fila">
+          <dt>Cantidad</dt>
+          <dd>#{devolucionBean.venta.cantidad}</dd>
+        </div>
+        <div class="resumen-fila">
+          <dt>Fecha de compra</dt>
+          <dd>
+            <h:outputText value="#{devolucionBean.venta.fecha}">
+              <f:convertDateTime type="localDate" pattern="dd/MM/yyyy"/>
+            </h:outputText>
+          </dd>
+        </div>
+        <div class="resumen-fila">
+          <dt>Importe pagado</dt>
+          <dd>
+            <h:outputText value="#{devolucionBean.venta.importe}">
+              <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="0"/>
+            </h:outputText>
+          </dd>
+        </div>
+      </dl>
+
+      <div class="card">
+        <h3 class="card-titulo">Motivo de la devoluci&#243;n</h3>
+
+        <h:form>
+
+          <div class="campo">
+            <h:outputLabel for="motivo" value="&#191;Qu&#233; pas&#243; con el repuesto?"/>
+            <h:selectOneMenu id="motivo" value="#{devolucionBean.motivo}">
+              <f:selectItem itemLabel="Eleg&#237; un motivo..." itemValue="#{null}"/>
+              <f:selectItems value="#{devolucionBean.motivos}"
+                             var="m"
+                             itemLabel="#{m.etiqueta}"
+                             itemValue="#{m}"/>
+            </h:selectOneMenu>
+          </div>
+
+          <div class="campo">
+            <h:outputLabel for="coment" value="Comentario"/>
+            <h:inputTextarea id="coment" value="#{devolucionBean.comentario}"
+                             rows="4"/>
+            <span class="campo-ayuda">
+              Si el repuesto lleg&#243; defectuoso, el comentario es obligatorio.
+            </span>
+          </div>
+
+          <div class="campo-ayuda" style="background:var(--accent-soft);padding:11px 13px;border-radius:7px">
+            Si te arrepentiste de la compra se retiene el 10&#37; por costo de env&#237;o.
+            En los dem&#225;s casos se reintegra el importe completo.
+          </div>
+
+          <div class="form-acciones">
+            <h:commandButton value="Enviar solicitud"
+                             action="#{devolucionBean.enviar}"
+                             styleClass="btn btn-primario"/>
+            <h:commandButton value="Cancelar"
+                             action="#{devolucionBean.cancelar}"
+                             immediate="true"
+                             styleClass="btn btn-secundario"/>
+          </div>
+
+        </h:form>
+      </div>
+
+    </ui:fragment>
+
+  </ui:define>
+</ui:composition>

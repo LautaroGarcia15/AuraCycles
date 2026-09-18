@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+                                 https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
+
+  <persistence-unit name="repuestosPU" transaction-type="JTA">
+
+    <jta-data-source>java:/RepuestosDS</jta-data-source>
+
+    <class>ar.edu.uade.repuestos.modelo.Usuario</class>
+    <class>ar.edu.uade.repuestos.modelo.Producto</class>
+    <class>ar.edu.uade.repuestos.modelo.Venta</class>
+    <class>ar.edu.uade.repuestos.modelo.Resena</class>
+    <class>ar.edu.uade.repuestos.modelo.Devolucion</class>
+
+    <properties>
+      <!-- El esquema lo crea sql/schema.sql; Hibernate no lo genera. -->
+      <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
+      <property name="hibernate.show_sql" value="true"/>
+      <property name="hibernate.format_sql" value="true"/>
+    </properties>
+
+  </persistence-unit>
+</persistence>

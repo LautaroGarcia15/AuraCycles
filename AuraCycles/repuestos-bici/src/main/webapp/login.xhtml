@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+
+<h:head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Ingresar &#183; Repuestos de Bicicleta</title>
+  <h:outputStylesheet library="css" name="app.css"/>
+</h:head>
+
+<h:body styleClass="#{sesion.claseTema}">
+  <div class="login-pantalla">
+    <div class="login-card">
+
+      <div class="login-marca">
+        <div class="sidebar-logo">RB</div>
+        <div>
+          <div style="font:600 14px 'IBM Plex Sans',sans-serif">Repuestos de Bicicleta</div>
+          <div class="sidebar-sub" style="color:var(--text-faint)">Rese&#241;as y devoluciones</div>
+        </div>
+      </div>
+
+      <div class="mensajes">
+        <h:messages infoClass="info" errorClass="error" layout="list"
+                    showDetail="false" showSummary="true"/>
+      </div>
+
+      <ui:fragment rendered="#{not loginBean.mostrandoRegistro}">
+        <h:form>
+          <span class="eyebrow">Ingresar al sistema</span>
+
+          <div class="campo">
+            <h:outputLabel for="email" value="Email"/>
+            <h:inputText id="email" value="#{loginBean.email}"
+                         autocomplete="username"/>
+          </div>
+
+          <div class="campo">
+            <h:outputLabel for="pass" value="Contrase&#241;a"/>
+            <h:inputSecret id="pass" value="#{loginBean.password}"
+                           autocomplete="current-password"/>
+          </div>
+
+          <div class="form-acciones">
+            <h:commandButton value="Ingresar" action="#{loginBean.ingresar}"
+                             styleClass="btn btn-primario"/>
+            <h:commandLink value="Crear una cuenta"
+                           action="#{loginBean.alternarRegistro}"
+                           styleClass="campo-ayuda"/>
+          </div>
+        </h:form>
+      </ui:fragment>
+
+      <ui:fragment rendered="#{loginBean.mostrandoRegistro}">
+        <h:form>
+          <span class="eyebrow">Crear una cuenta</span>
+
+          <div class="campo">
+            <h:outputLabel for="nom" value="Nombre y apellido"/>
+            <h:inputText id="nom" value="#{loginBean.nombreNuevo}"/>
+          </div>
+
+          <div class="campo">
+            <h:outputLabel for="mailN" value="Email"/>
+            <h:inputText id="mailN" value="#{loginBean.emailNuevo}"/>
+          </div>
+
+          <div class="campo">
+            <h:outputLabel for="passN" value="Contrase&#241;a"/>
+            <h:inputSecret id="passN" value="#{loginBean.passwordNueva}"
+                           autocomplete="new-password"/>
+            <span class="campo-ayuda">Al menos 8 caracteres.</span>
+          </div>
+
+          <div class="form-acciones">
+            <h:commandButton value="Crear cuenta" action="#{loginBean.registrarse}"
+                             styleClass="btn btn-primario"/>
+            <h:commandLink value="Ya tengo cuenta"
+                           action="#{loginBean.alternarRegistro}"
+                           styleClass="campo-ayuda"/>
+          </div>
+        </h:form>
+      </ui:fragment>
+
+    </div>
+  </div>
+</h:body>
+</html>

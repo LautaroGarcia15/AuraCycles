@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<ui:composition template="/WEB-INF/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:pt="jakarta.faces.passthrough">
+
+  <ui:param name="seccion" value="productos"/>
+
+  <ui:define name="titulo">Productos</ui:define>
+
+  <ui:define name="contenido">
+
+    <div class="pagina-encabezado">
+      <span class="eyebrow">Cat&#225;logo</span>
+      <h2>Repuestos</h2>
+      <p>Busc&#225; por nombre o categor&#237;a. El stock se actualiza con cada compra.</p>
+    </div>
+
+    <h:form>
+      <div class="buscador">
+        <span class="campo" style="margin:0;flex:1;max-width:380px">
+          <h:inputText value="#{productosBean.busqueda}"
+                       pt:placeholder="Buscar cubiertas, frenos, transmisi&#243;n..."/>
+        </span>
+        <h:commandButton value="Buscar" action="#{productosBean.buscar}"
+                         styleClass="btn btn-primario"/>
+      </div>
+    </h:form>
+
+    <ui:fragment rendered="#{empty productosBean.productos}">
+      <div class="vacio">
+        <strong>No hay repuestos que coincidan</strong>
+        Prob&#225; con otra palabra o limpi&#225; el buscador.
+      </div>
+    </ui:fragment>
+
+    <div class="grilla">
+      <ui:repeat value="#{productosBean.productos}" var="p">
+        <div class="producto-card">
+
+          <span class="producto-codigo">#{p.codigo} &#183; #{p.categoria}</span>
+
+          <div class="producto-nombre">
+            <h:link outcome="producto" value="#{p.nombre}">
+              <f:param name="productoId" value="#{p.id}"/>
+            </h:link>
+          </div>
+
+          <div class="estrellas">
+            <h:outputText value="#{productosBean.estrellas(productosBean.promedio(p.id))}"/>
+            <span class="celda-tenue" style="margin-left:6px">
+              <h:outputText value="#{productosBean.cantidadResenas(p.id)} rese&#241;as"
+                            escape="false"/>
+            </span>
+          </div>
+
+          <div class="producto-precio">
+            <h:outputText value="#{p.precio}">
+              <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="0"/>
+            </h:outputText>
+          </div>
+
+          <div class="producto-pie">
+            <ui:fragment rendered="#{p.stock gt 0}">
+              <span class="badge badge-aprobada">#{p.stock} en stock</span>
+            </ui:fragment>
+            <ui:fragment rendered="#{p.stock le 0}">
+              <span class="badge badge-rechazada">Sin stock</span>
+            </ui:fragment>
+
+            <h:form>
+              <h:commandButton value="Comprar"
+                               action="#{productosBean.comprar(p.id)}"
+                               disabled="#{p.stock le 0}"
+                               styleClass="btn btn-primario btn-chico"/>
+            </h:form>
+          </div>
+
+        </div>
+      </ui:repeat>
+    </div>
+
+  </ui:define>
+</ui:composition>

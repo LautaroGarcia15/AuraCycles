@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<ui:composition template="/WEB-INF/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets">
+
+  <ui:param name="seccion" value="compras"/>
+
+  <f:metadata>
+    <f:viewParam name="codigo" value="#{confirmacionBean.codigo}"/>
+  </f:metadata>
+
+  <ui:define name="titulo">Solicitud enviada</ui:define>
+
+  <ui:define name="contenido">
+
+    <div class="confirmacion">
+
+      <div class="confirmacion-icono">&#10003;</div>
+
+      <h2 style="margin:0 0 7px;font:600 20px 'IBM Plex Sans',sans-serif">
+        Solicitud enviada
+      </h2>
+
+      <p style="margin:0;color:var(--text-muted);font-size:13.5px">
+        Guardamos tu solicitud. Un moderador la revisa y te avisamos por email.
+      </p>
+
+      <div class="confirmacion-codigo">#{confirmacionBean.codigo}</div>
+
+      <p style="margin:0 0 20px">
+        <span class="badge badge-pendiente">Pendiente de revisi&#243;n</span>
+      </p>
+
+      <div style="display:flex;gap:9px;justify-content:center;flex-wrap:wrap">
+        <h:link outcome="compras" value="Volver a mis compras"
+                styleClass="btn btn-primario"/>
+        <h:link outcome="productos" value="Seguir comprando"
+                styleClass="btn btn-secundario"/>
+      </div>
+
+    </div>
+
+  </ui:define>
+</ui:composition>

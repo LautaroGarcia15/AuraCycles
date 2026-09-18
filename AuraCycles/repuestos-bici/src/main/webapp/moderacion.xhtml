@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<ui:composition template="/WEB-INF/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets">
+
+  <ui:param name="seccion" value="moderacion"/>
+
+  <!-- El rendered de abajo es cosmetico: la autorizacion real la hacen web.xml y @RolesAllowed. -->
+  <ui:define name="titulo">Panel de moderaci&#243;n</ui:define>
+
+  <ui:define name="contenido">
+
+    <ui:fragment rendered="#{not sesion.moderador}">
+      <div class="vacio">
+        <strong>No tenés acceso a esta secci&#243;n</strong>
+        El panel de moderaci&#243;n es exclusivo del rol MODERADOR.
+      </div>
+    </ui:fragment>
+
+    <ui:fragment rendered="#{sesion.moderador}">
+
+      <div class="pagina-encabezado">
+        <span class="eyebrow">Colas pendientes</span>
+        <h2>Panel de moderaci&#243;n</h2>
+        <p>Resolv&#233; rese&#241;as y devoluciones. Aprobar una devoluci&#243;n emite el reembolso y repone el stock.</p>
+      </div>
+
+      <h:form>
+
+        <div class="solapas">
+          <h:commandButton value="Rese&#241;as pendientes (#{moderacionBean.cantidadResenas})"
+                           action="#{moderacionBean.setSolapa('resenas')}"
+                           styleClass="solapa #{moderacionBean.solapa eq 'resenas' ? 'activa' : ''}"/>
+          <h:commandButton value="Devoluciones pendientes (#{moderacionBean.cantidadDevoluciones})"
+                           action="#{moderacionBean.setSolapa('devoluciones')}"
+                           styleClass="solapa #{moderacionBean.solapa eq 'devoluciones' ? 'activa' : ''}"/>
+        </div>
+
+        <ui:fragment rendered="#{moderacionBean.solapa eq 'resenas'}">
+
+          <ui:fragment rendered="#{empty moderacionBean.resenasPendientes}">
+            <div class="vacio">
+              <strong>No hay rese&#241;as esperando</strong>
+              La cola est&#225; al d&#237;a.
+            </div>
+          </ui:fragment>
+
+          <ui:fragment rendered="#{not empty moderacionBean.resenasPendientes}">
+            <div class="tabla-wrap">
+              <table class="tabla">
+                <thead>
+                  <tr>
+                    <th>C&#243;digo</th>
+                    <th>Repuesto</th>
+                    <th>Autor</th>
+                    <th>Puntaje</th>
+                    <th>Rese&#241;a</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ui:repeat value="#{moderacionBean.resenasPendientes}" var="r">
+                    <tr>
+                      <td data-etiqueta="C&#243;digo"><span class="codigo">#{r.codigo}</span></td>
+                      <td data-etiqueta="Repuesto" class="celda-titulo">#{r.producto.nombre}</td>
+                      <td data-etiqueta="Autor" class="celda-tenue">#{r.usuario.nombre}</td>
+                      <td data-etiqueta="Puntaje" class="estrellas">
+                        <h:outputText value="#{moderacionBean.estrellas(r.puntaje)}"/>
+                      </td>
+                      <td data-etiqueta="Rese&#241;a" class="celda-tenue">
+                        <strong>#{r.titulo}</strong><br/>#{r.texto}
+                      </td>
+                      <td data-etiqueta="Acciones">
+                        <div style="display:flex;gap:6px;flex-wrap:wrap">
+                          <h:commandButton value="Aprobar"
+                                           action="#{moderacionBean.aprobarResena(r.id)}"
+                                           styleClass="btn btn-ok btn-chico"/>
+                          <h:commandButton value="Rechazar"
+                                           action="#{moderacionBean.rechazarResena(r.id)}"
+                                           styleClass="btn btn-peligro btn-chico"/>
+                        </div>
+                      </td>
+                    </tr>
+                  </ui:repeat>
+                </tbody>
+              </table>
+            </div>
+          </ui:fragment>
+
+        </ui:fragment>
+
+        <ui:fragment rendered="#{moderacionBean.solapa eq 'devoluciones'}">
+
+          <ui:fragment rendered="#{empty moderacionBean.devolucionesPendientes}">
+            <div class="vacio">
+              <strong>No hay devoluciones esperando</strong>
+              La cola est&#225; al d&#237;a.
+            </div>
+          </ui:fragment>
+
+          <ui:fragment rendered="#{not empty moderacionBean.devolucionesPendientes}">
+            <div class="tabla-wrap">
+              <table class="tabla">
+                <thead>
+                  <tr>
+                    <th>C&#243;digo</th>
+                    <th>Orden</th>
+                    <th>Cliente</th>
+                    <th>Repuesto</th>
+                    <th>Motivo</th>
+                    <th>Importe</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ui:repeat value="#{moderacionBean.devolucionesPendientes}" var="d">
+                    <tr>
+                      <td data-etiqueta="C&#243;digo"><span class="codigo">#{d.codigo}</span></td>
+                      <td data-etiqueta="Orden" class="celda-tenue">#{d.venta.numeroOrden}</td>
+                      <td data-etiqueta="Cliente" class="celda-tenue">#{d.venta.usuario.nombre}</td>
+                      <td data-etiqueta="Repuesto" class="celda-titulo">#{d.venta.producto.nombre}</td>
+                      <td data-etiqueta="Motivo">
+                        <span class="badge badge-neutro">#{d.motivo.etiqueta}</span>
+                        <div class="celda-tenue" style="margin-top:5px">#{d.comentario}</div>
+                      </td>
+                      <td data-etiqueta="Importe">
+                        <h:outputText value="#{d.venta.importe}">
+                          <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="0"/>
+                        </h:outputText>
+                      </td>
+                      <td data-etiqueta="Acciones">
+                        <div style="display:flex;gap:6px;flex-wrap:wrap">
+                          <h:commandButton value="Aprobar"
+                                           action="#{moderacionBean.aprobarDevolucion(d.id)}"
+                                           styleClass="btn btn-ok btn-chico"/>
+                          <h:commandButton value="Rechazar"
+                                           action="#{moderacionBean.rechazarDevolucion(d.id)}"
+                                           styleClass="btn btn-peligro btn-chico"/>
+                        </div>
+                      </td>
+                    </tr>
+                  </ui:repeat>
+                </tbody>
+              </table>
+            </div>
+          </ui:fragment>
+
+        </ui:fragment>
+
+      </h:form>
+
+    </ui:fragment>
+
+  </ui:define>
+</ui:composition>

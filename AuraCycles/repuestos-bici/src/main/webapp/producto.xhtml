@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<ui:composition template="/WEB-INF/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets">
+
+  <ui:param name="seccion" value="productos"/>
+
+  <f:metadata>
+    <f:viewParam name="productoId" value="#{productosBean.productoId}"/>
+    <f:viewAction action="#{productosBean.cargarDetalle}"/>
+  </f:metadata>
+
+  <ui:define name="titulo">Detalle del repuesto</ui:define>
+
+  <ui:define name="contenido">
+
+    <ui:fragment rendered="#{empty productosBean.seleccionado}">
+      <div class="vacio">
+        <strong>No encontramos ese repuesto</strong>
+        <h:link outcome="productos" value="Volver al cat&#225;logo"/>
+      </div>
+    </ui:fragment>
+
+    <ui:fragment rendered="#{not empty productosBean.seleccionado}">
+
+      <div class="pagina-encabezado">
+        <span class="eyebrow">
+          #{productosBean.seleccionado.codigo} &#183; #{productosBean.seleccionado.categoria}
+        </span>
+        <h2>#{productosBean.seleccionado.nombre}</h2>
+      </div>
+
+      <div class="card">
+        <p style="color:var(--text-muted);margin-top:0">
+          #{productosBean.seleccionado.descripcion}
+        </p>
+
+        <dl class="resumen" style="margin-bottom:0">
+          <div class="resumen-fila">
+            <dt>Precio</dt>
+            <dd>
+              <h:outputText value="#{productosBean.seleccionado.precio}">
+                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="0"/>
+              </h:outputText>
+            </dd>
+          </div>
+          <div class="resumen-fila">
+            <dt>Stock disponible</dt>
+            <dd>#{productosBean.seleccionado.stock} unidades</dd>
+          </div>
+          <div class="resumen-fila">
+            <dt>Puntaje promedio</dt>
+            <dd class="estrellas">
+              <h:outputText value="#{productosBean.estrellas(productosBean.promedio(productosBean.seleccionado.id))}"/>
+            </dd>
+          </div>
+        </dl>
+
+        <div class="form-acciones">
+          <h:form>
+            <h:commandButton value="Comprar"
+                             action="#{productosBean.comprar(productosBean.seleccionado.id)}"
+                             disabled="#{productosBean.seleccionado.stock le 0}"
+                             styleClass="btn btn-primario"/>
+          </h:form>
+
+          <ui:fragment rendered="#{productosBean.puedeResenar}">
+            <h:link outcome="resena" value="Escribir rese&#241;a"
+                    styleClass="btn btn-secundario">
+              <f:param name="productoId" value="#{productosBean.seleccionado.id}"/>
+            </h:link>
+          </ui:fragment>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card-titulo">Rese&#241;as del producto</h3>
+
+        <ui:fragment rendered="#{empty productosBean.resenas}">
+          <div class="vacio" style="border:none;padding:26px 0">
+            <strong>Todav&#237;a no hay rese&#241;as publicadas</strong>
+            Solo se muestran las que aprob&#243; un moderador.
+          </div>
+        </ui:fragment>
+
+        <ui:repeat value="#{productosBean.resenas}" var="r">
+          <div style="padding:13px 0;border-bottom:1px solid var(--line-soft)">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+              <span class="estrellas">
+                <h:outputText value="#{productosBean.estrellas(r.puntaje)}"/>
+              </span>
+              <strong style="font-size:13.5px">#{r.titulo}</strong>
+              <span class="celda-tenue" style="margin-left:auto">
+                #{r.usuario.nombre} &#183;
+                <h:outputText value="#{r.fecha}">
+                  <f:convertDateTime type="localDate" pattern="dd/MM/yyyy"/>
+                </h:outputText>
+              </span>
+            </div>
+            <p style="margin:7px 0 0;color:var(--text-muted);font-size:13px">#{r.texto}</p>
+          </div>
+        </ui:repeat>
+      </div>
+
+    </ui:fragment>
+
+  </ui:define>
+</ui:composition>
